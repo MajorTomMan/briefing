@@ -1,0 +1,29 @@
+---
+interface Source {
+  name: string;
+  published?: string;
+  url: string;
+}
+
+interface Quote {
+  quote: string;
+  note?: string;
+  source: Source;
+}
+
+interface Props {
+  item: Quote;
+}
+
+const { item } = Astro.props;
+---
+
+<figure class="source-quote">
+  <blockquote>“{item.quote}”</blockquote>
+  {item.note && <p>{item.note}</p>}
+  <figcaption>
+    <a href={item.source.url} target="_blank" rel="noreferrer">
+      {item.source.name}{item.source.published ? ` · ${item.source.published}` : ""}
+    </a>
+  </figcaption>
+</figure>
