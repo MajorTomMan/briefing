@@ -43,6 +43,13 @@ interface ChartData {
   yMax?: number;
 }
 
+interface PrincipleLink {
+  chapter: string;
+  title: string;
+  href: string;
+  note?: string;
+}
+
 interface Prerequisites {
   level: "basic" | "intermediate" | "advanced";
   subjects: { name: string; note?: string }[];
@@ -59,6 +66,7 @@ interface Props {
   topics?: string[];
   counterpart?: string;
   prerequisites?: Prerequisites;
+  principles?: PrincipleLink[];
   sources?: Source[];
   formulas?: Formula[];
   quotes?: Quote[];
@@ -75,6 +83,7 @@ const {
   topics = [],
   counterpart,
   prerequisites,
+  principles = [],
   sources = [],
   formulas = [],
   quotes = [],
@@ -94,6 +103,7 @@ const counterpartHref = counterpart
   ? `${base}${counterpart.replace(/^\//, "")}/`.replace(/\/{2,}/g, "/")
   : undefined;
 const sourceCount = sources.length;
+const principleHref = (href: string) => `${base}${href.replace(/^\//, "")}/`.replace(/\/{2,}/g, "/");
 const levelLabel = prerequisites
   ? {
       basic: lang === "zh" ? "基础" : "Basic",
@@ -130,6 +140,28 @@ const levelLabel = prerequisites
           </a>
         )}
       </header>
+
+      {section === "knowledge" && kind === "feature" && principles.length > 0 && (
+        <section class="principle-map" aria-label={lang === "zh" ? "配套原理" : "Related principles"}>
+          <div class="principle-map__head">
+            <span>{lang === "zh" ? "配套原理" : "RELATED PRINCIPLES"}</span>
+            <strong>{lang === "zh" ? "每章对应一篇原理文" : "One principle essay for each chapter"}</strong>
+          </div>
+          <div class="principle-map__grid">
+            {principles.map((item, index) => (
+              <a class="principle-map__item" href={principleHref(item.href)}>
+                <span class="principle-map__index">{String(index + 1).padStart(2, "0")}</span>
+                <div>
+                  <small>{item.chapter}</small>
+                  <h3>{item.title}</h3>
+                  {item.note && <p>{item.note}</p>}
+                </div>
+                <span class="principle-map__arrow">→</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
 
       {prerequisites && (
         <section class="prerequisite-box" aria-label={lang === "zh" ? "阅读前提" : "Before you read"}>
