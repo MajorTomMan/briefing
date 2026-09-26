@@ -30,34 +30,46 @@ interface Props {
 }
 
 const { chart } = Astro.props;
-const width = 760;
-const height = 360;
-const margin = { top: 24, right: 24, bottom: 58, left: 66 };
-const plotW = width - margin.left - margin.right;
-const plotH = height - margin.top - margin.bottom;
 const allValues = chart.series.flatMap((s) => s.values);
 const rawMin = Math.min(...allValues);
 const rawMax = Math.max(...allValues);
 const min = chart.yMin ?? (rawMin >= 0 ? 0 : rawMin);
 const maxCandidate = chart.yMax ?? rawMax;
 const max = maxCandidate === min ? min + 1 : maxCandidate;
-const xAt = (i: number) => chart.labels.length <= 1
-  ? margin.left + plotW / 2
-  : margin.left + (i / (chart.labels.length - 1)) * plotW;
-const yAt = (v: number) => margin.top + (1 - (v - min) / (max - min)) * plotH;
-const ticks = Array.from({ length: 5 }, (_, i) => min + ((max - min) * i) / 4).reverse();
+
 const fmt = (v: number) => {
   const a = Math.abs(v);
   const digits = a >= 100 ? 0 : a >= 10 ? 1 : 2;
   return v.toFixed(digits).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1");
 };
-const linePaths = chart.series.map((series) =>
-  series.values.map((value, i) => `${i === 0 ? "M" : "L"} ${xAt(i)} ${yAt(value)}`).join(" ")
-);
-const barGroup = plotW / Math.max(chart.labels.length, 1);
-const barGap = Math.min(10, barGroup * 0.12);
-const groupW = Math.max(8, barGroup - barGap * 2);
-const barW = groupW / Math.max(chart.series.length, 1);
+
+function buildGeometry(width: number, height: number, mobile = false) {
+  const margin = mobile
+    ? { top: 18, right: 10, bottom: 44, left: 46 }
+    : { top: 24, right: 24, bottom: 58, left: 66 };
+  const plotW = width - margin.left - margin.right;
+  const plotH = height - margin.top - margin.bottom;
+  const xAt = (i: number) =>
+    chart.labels.length <= 1
+      ? margin.left + plotW / 2
+      : margin.left + (i / (chart.labels.length - 1)) * plotW;
+  const yAt = (v: number) => margin.top + (1 - (v - min) / (max - min)) * plotH;
+  const tickCount = mobile ? 4 : 5;
+  const ticks = Array.from({ length: tickCount }, (_, i) => min + ((max - min) * i) / (tickCount - 1)).reverse();
+  const linePaths = chart.series.map((series) =>
+    series.values.map((value, i) => `${i === 0 ? "M" : "L"} ${xAt(i)} ${yAt(value)}`).join(" ")
+  );
+  const barGroup = plotW / Math.max(chart.labels.length, 1);
+  const barGap = Math.min(mobile ? 6 : 10, barGroup * 0.12);
+  const groupW = Math.max(8, barGroup - barGap * 2);
+  const barW = groupW / Math.max(chart.series.length, 1);
+  const mobileStep = chart.labels.length > 8 ? Math.ceil(chart.labels.length / 5) : chart.labels.length > 5 ? 2 : 1;
+
+  return { width, height, margin, plotW, plotH, xAt, yAt, ticks, linePaths, barGroup, barGap, barW, mobileStep };
+}
+
+const desktop = buildGeometry(760, 360, false);
+const mobile = buildGeometry(360, 250, true);
 ---
 
 <figure class="data-figure">
@@ -70,49 +82,54 @@ const barW = groupW / Math.max(chart.series.length, 1);
   </div>
 
   <div class="chart-frame" role="img" aria-label={chart.title}>
-    <svg viewBox={`0 0 ${width} ${height}`} aria-hidden="true">
-      {ticks.map((tick) => (
-        <g>
-          <line class="chart-gridline" x1={margin.left} x2={width - margin.right} y1={yAt(tick)} y2={yAt(tick)} />
-          <text class="chart-axis-label" x={margin.left - 12} y={yAt(tick) + 4} text-anchor="end">{fmt(tick)}</text>
-        </g>
-      ))}
+    {[{ g: desktop, cls: "chart-svg chart-svg--desktop" }, { g: mobile, cls: "chart-svg chart-svg--mobile" }].map(({ g, cls }) => (
+      <svg class={cls} viewBox={`0 0 ${g.width} ${g.height}`} preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        {g.ticks.map((tick) => (
+          <g>
+            <line class="chart-gridline" x1={g.margin.left} x2={g.width - g.margin.right} y1={g.yAt(tick)} y2={g.yAt(tick)} />
+            <text class="chart-axis-label" x={g.margin.left - 9} y={g.yAt(tick) + 4} text-anchor="end">{fmt(tick)}</text>
+          </g>
+        ))}
 
-      <line class="chart-axis" x1={margin.left} x2={margin.left} y1={margin.top} y2={height - margin.bottom} />
-      <line class="chart-axis" x1={margin.left} x2={width - margin.right} y1={height - margin.bottom} y2={height - margin.bottom} />
+        <line class="chart-axis" x1={g.margin.left} x2={g.margin.left} y1={g.margin.top} y2={g.height - g.margin.bottom} />
+        <line class="chart-axis" x1={g.margin.left} x2={g.width - g.margin.right} y1={g.height - g.margin.bottom} y2={g.height - g.margin.bottom} />
 
-      {chart.type === "line" ? (
-        <>
-          {chart.series.map((series, sIndex) => (
-            <g class={`chart-series chart-series-${sIndex % 4}`}>
-              <path class="chart-line" d={linePaths[sIndex]} />
-              {series.values.map((value, i) => (
-                <circle class="chart-dot" cx={xAt(i)} cy={yAt(value)} r="4" />
-              ))}
-            </g>
-          ))}
-        </>
-      ) : (
-        <>
-          {chart.labels.map((_, i) => chart.series.map((series, sIndex) => {
-            const value = series.values[i] ?? 0;
-            const zeroY = yAt(Math.max(min, 0));
-            const valueY = yAt(value);
-            const y = Math.min(zeroY, valueY);
-            const h = Math.max(1, Math.abs(zeroY - valueY));
-            const x = margin.left + i * barGroup + barGap + sIndex * barW;
-            return <rect class={`chart-bar chart-series-${sIndex % 4}`} x={x} y={y} width={Math.max(2, barW - 2)} height={h} rx="2" />;
-          }))}
-        </>
-      )}
+        {chart.type === "line" ? (
+          <>
+            {chart.series.map((series, sIndex) => (
+              <g class={`chart-series chart-series-${sIndex % 4}`}>
+                <path class="chart-line" d={g.linePaths[sIndex]} />
+                {series.values.map((value, i) => (
+                  <circle class="chart-dot" cx={g.xAt(i)} cy={g.yAt(value)} r={g.width < 500 ? "3.5" : "4"} />
+                ))}
+              </g>
+            ))}
+          </>
+        ) : (
+          <>
+            {chart.labels.map((_, i) => chart.series.map((series, sIndex) => {
+              const value = series.values[i] ?? 0;
+              const zeroY = g.yAt(Math.max(min, 0));
+              const valueY = g.yAt(value);
+              const y = Math.min(zeroY, valueY);
+              const h = Math.max(1, Math.abs(zeroY - valueY));
+              const x = g.margin.left + i * g.barGroup + g.barGap + sIndex * g.barW;
+              return <rect class={`chart-bar chart-series-${sIndex % 4}`} x={x} y={y} width={Math.max(2, g.barW - 2)} height={h} rx="2" />;
+            }))}
+          </>
+        )}
 
-      {chart.labels.map((label, i) => (
-        <text class="chart-axis-label chart-x-label" x={xAt(i)} y={height - margin.bottom + 24} text-anchor="middle">{label}</text>
-      ))}
+        {chart.labels.map((label, i) => {
+          const hideOnMobile = g.width < 500 && i !== 0 && i !== chart.labels.length - 1 && i % g.mobileStep !== 0;
+          return !hideOnMobile && (
+            <text class="chart-axis-label chart-x-label" x={g.xAt(i)} y={g.height - g.margin.bottom + 21} text-anchor="middle">{label}</text>
+          );
+        })}
 
-      {chart.xLabel && <text class="chart-axis-title" x={margin.left + plotW / 2} y={height - 8} text-anchor="middle">{chart.xLabel}</text>}
-      {chart.yLabel && <text class="chart-axis-title" transform={`translate(16 ${margin.top + plotH / 2}) rotate(-90)`} text-anchor="middle">{chart.yLabel}</text>}
-    </svg>
+        {chart.xLabel && <text class="chart-axis-title" x={g.margin.left + g.plotW / 2} y={g.height - 7} text-anchor="middle">{chart.xLabel}</text>}
+        {chart.yLabel && <text class="chart-axis-title" transform={`translate(13 ${g.margin.top + g.plotH / 2}) rotate(-90)`} text-anchor="middle">{chart.yLabel}</text>}
+      </svg>
+    ))}
   </div>
 
   {chart.series.length > 1 && (
