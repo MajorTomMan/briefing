@@ -1,11 +1,48 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
+import DataChart from "../components/DataChart.astro";
+import FormulaReference from "../components/FormulaReference.astro";
+import SourceQuote from "../components/SourceQuote.astro";
 
 interface Source {
   name: string;
   published?: string;
   url: string;
 }
+
+interface Formula {
+  name: string;
+  expression: string;
+  note?: string;
+  source: Source;
+}
+
+interface Quote {
+  quote: string;
+  note?: string;
+  source: Source;
+}
+
+interface ChartSeries {
+  name: string;
+  values: number[];
+}
+
+interface ChartData {
+  title: string;
+  description?: string;
+  type: "line" | "bar";
+  xLabel?: string;
+  yLabel?: string;
+  unit?: string;
+  labels: string[];
+  series: ChartSeries[];
+  source: Source;
+  note?: string;
+  yMin?: number;
+  yMax?: number;
+}
+
 interface Props {
   title: string;
   dek: string;
@@ -15,40 +52,122 @@ interface Props {
   topics?: string[];
   counterpart?: string;
   sources?: Source[];
+  formulas?: Formula[];
+  quotes?: Quote[];
+  charts?: ChartData[];
 }
-const { title, dek, date, section, lang, topics = [], counterpart, sources = [] } = Astro.props;
+
+const {
+  title,
+  dek,
+  date,
+  section,
+  lang,
+  topics = [],
+  counterpart,
+  sources = [],
+  formulas = [],
+  quotes = [],
+  charts = [],
+} = Astro.props;
+
 const base = import.meta.env.BASE_URL;
 const sectionLabel = section === "alert" ? "重大事件" : section === "daily" ? "每日简报" : "知识漫游";
-const counterpartHref = counterpart ? `${base}${counterpart.replace(/^\//, "")}/`.replace(/\/{2,}/g, "/") : undefined;
+const sectionEnglish = section === "alert" ? "MAJOR ALERT" : section === "daily" ? "DAILY BRIEF" : "KNOWLEDGE BRIEF";
+const counterpartHref = counterpart
+  ? `${base}${counterpart.replace(/^\//, "")}/`.replace(/\/{2,}/g, "/")
+  : undefined;
+const sourceCount = sources.length;
 ---
+
 <BaseLayout title={title} description={dek}>
   <div class="site-shell article-wrap">
-    <article>
+    <article class="article-main">
       <header class="article-header">
-        <div class="eyebrow">{sectionLabel}</div>
+        <div class="article-kicker-row">
+          <div>
+            <div class="eyebrow">{sectionEnglish}</div>
+            <div class="section-label">{sectionLabel}</div>
+          </div>
+          <div class="article-number">{date.toISOString().slice(0, 10).replaceAll("-", " / ")}</div>
+        </div>
+
         <h1>{title}</h1>
         <div class="article-dek">{dek}</div>
+
         <div class="article-meta">
           <span>{date.toISOString().slice(0, 10)}</span>
           <span>{lang === "zh" ? "中文版" : "English Edition"}</span>
           {topics.map((topic) => <span>{topic}</span>)}
         </div>
-        {counterpartHref && <a class="lang-link" href={counterpartHref}>{lang === "zh" ? "Read in English →" : "阅读中文版 →"}</a>}
+
+        {counterpartHref && (
+          <a class="lang-link" href={counterpartHref}>
+            {lang === "zh" ? "Read in English →" : "阅读中文版 →"}
+          </a>
+        )}
       </header>
+
+      {quotes.length > 0 && (
+        <section class="quote-stack" aria-label={lang === "zh" ? "原文摘录" : "Source excerpts"}>
+          {quotes.map((item) => <SourceQuote item={item} />)}
+        </section>
+      )}
+
       <div class="prose"><slot /></div>
+
+      {charts.length > 0 && (
+        <section class="article-extra-section">
+          <div class="extra-section-head">
+            <span>DATA</span>
+            <h2>{lang === "zh" ? "图表与数据" : "Charts & data"}</h2>
+          </div>
+          <div class="chart-stack">
+            {charts.map((chart) => <DataChart chart={chart} />)}
+          </div>
+        </section>
+      )}
+
+      {formulas.length > 0 && (
+        <section class="article-extra-section">
+          <div class="extra-section-head">
+            <span>METHOD</span>
+            <h2>{lang === "zh" ? "公式与来源" : "Formula provenance"}</h2>
+          </div>
+          <div class="formula-grid">
+            {formulas.map((formula) => <FormulaReference formula={formula} />)}
+          </div>
+        </section>
+      )}
     </article>
+
     <aside class="article-aside">
-      <h3>{lang === "zh" ? "来源" : "Sources"}</h3>
-      {sources.length > 0 ? (
-        <ol class="source-list">
-          {sources.map((source) => (
-            <li>
-              <a href={source.url} target="_blank" rel="noreferrer">{source.name}</a>
-              {source.published && <div>{source.published}</div>}
-            </li>
-          ))}
-        </ol>
-      ) : <div class="empty">{lang === "zh" ? "暂无来源列表" : "No source list"}</div>}
+      <div class="aside-block">
+        <div class="aside-label">{lang === "zh" ? "文档" : "Document"}</div>
+        <div class="aside-stat">
+          <strong>{sourceCount.toString().padStart(2, "0")}</strong>
+          <span>{lang === "zh" ? "个来源" : "sources"}</span>
+        </div>
+      </div>
+
+      <div class="aside-block">
+        <h3>{lang === "zh" ? "来源" : "Sources"}</h3>
+        {sources.length > 0 ? (
+          <ol class="source-list">
+            {sources.map((source, index) => (
+              <li>
+                <span class="source-index">{String(index + 1).padStart(2, "0")}</span>
+                <div>
+                  <a href={source.url} target="_blank" rel="noreferrer">{source.name}</a>
+                  {source.published && <div>{source.published}</div>}
+                </div>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <div class="empty">{lang === "zh" ? "暂无来源列表" : "No source list"}</div>
+        )}
+      </div>
     </aside>
   </div>
 </BaseLayout>
