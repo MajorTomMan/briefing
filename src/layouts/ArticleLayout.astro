@@ -43,6 +43,12 @@ interface ChartData {
   yMax?: number;
 }
 
+interface Prerequisites {
+  level: "basic" | "intermediate" | "advanced";
+  subjects: { name: string; note?: string }[];
+  note?: string;
+}
+
 interface Props {
   title: string;
   dek: string;
@@ -52,6 +58,7 @@ interface Props {
   lang: "zh" | "en";
   topics?: string[];
   counterpart?: string;
+  prerequisites?: Prerequisites;
   sources?: Source[];
   formulas?: Formula[];
   quotes?: Quote[];
@@ -67,6 +74,7 @@ const {
   lang,
   topics = [],
   counterpart,
+  prerequisites,
   sources = [],
   formulas = [],
   quotes = [],
@@ -86,6 +94,13 @@ const counterpartHref = counterpart
   ? `${base}${counterpart.replace(/^\//, "")}/`.replace(/\/{2,}/g, "/")
   : undefined;
 const sourceCount = sources.length;
+const levelLabel = prerequisites
+  ? {
+      basic: lang === "zh" ? "基础" : "Basic",
+      intermediate: lang === "zh" ? "中等" : "Intermediate",
+      advanced: lang === "zh" ? "进阶" : "Advanced",
+    }[prerequisites.level]
+  : undefined;
 ---
 
 <BaseLayout title={title} description={dek}>
@@ -115,6 +130,29 @@ const sourceCount = sources.length;
           </a>
         )}
       </header>
+
+      {prerequisites && (
+        <section class="prerequisite-box" aria-label={lang === "zh" ? "阅读前提" : "Before you read"}>
+          <div class="prerequisite-box__head">
+            <span>{lang === "zh" ? "阅读前提" : "BEFORE YOU READ"}</span>
+            <strong>{levelLabel}</strong>
+          </div>
+          <p class="prerequisite-box__intro">
+            {lang === "zh"
+              ? "这篇文章会用到以下背景。不了解也可以继续读，正文会补关键定义；若想跟完整推导，先熟悉这些内容会更顺畅。"
+              : "This article uses the background below. You can still read on—the key definitions are introduced in the text—but the full derivation is easier if these ideas are familiar."}
+          </p>
+          <ul>
+            {prerequisites.subjects.map((subject) => (
+              <li>
+                <strong>{subject.name}</strong>
+                {subject.note && <span>{subject.note}</span>}
+              </li>
+            ))}
+          </ul>
+          {prerequisites.note && <p class="prerequisite-box__note">{prerequisites.note}</p>}
+        </section>
+      )}
 
       {quotes.length > 0 && (
         <section class="quote-stack" aria-label={lang === "zh" ? "原文摘录" : "Source excerpts"}>
