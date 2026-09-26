@@ -25,10 +25,10 @@ In 1948, Claude E. Shannon published *A Mathematical Theory of Communication*. E
 
 He deliberately separated semantic meaning from transmission. A sender chooses one message from a set of possible messages, and the receiver tries to reconstruct that choice. From this viewpoint, information can first be treated as a reduction of uncertainty（不确定性）.
 
-For a discrete random variable (X) with outcomes (x_i) and probabilities (p_i), Shannon entropy is
+For a discrete random variable $X$ with outcomes $x_i$ and probabilities $p_i$, Shannon entropy is
 
 $$
-H(X)=-\sum_{i=1}^{n}p_i\log_2 p_i
+H$X$=-\sum_{i=1}^{n}p_i\log_2 p_i
 $$
 
 The unit is the bit. Two equally likely alternatives have an entropy of one bit. If one outcome is almost certain, entropy approaches zero because observing it removes very little uncertainty.
@@ -38,16 +38,16 @@ This idea connects directly to compression. When symbols have unequal probabilit
 For noisy channels, Shannon introduced mutual information:
 
 $$
-I(X;Y)=H(X)-H(X\mid Y)
+I(X;Y)=H$X$-H(X\mid Y)
 $$
 
-It measures how much observing (Y) tells us about (X). Channel capacity is then
+It measures how much observing $Y$ tells us about $X$. Channel capacity is then
 
 $$
 C=\max_{p(x)} I(X;Y)
 $$
 
-The theorem is existential（存在性的） rather than a recipe for one universal encoder. If the transmission rate (R<C), codes exist that can make the error probability arbitrarily（任意地） small. If (R>C), no engineering trick can evade the limit.
+The theorem is existential（存在性的） rather than a recipe for one universal encoder. If the transmission rate $R<C$, codes exist that can make the error probability arbitrarily（任意地） small. If $R>C$, no engineering trick can evade the limit.
 
 For the familiar additive white Gaussian noise channel,
 
@@ -55,7 +55,7 @@ $$
 C=B\log_2\left(1+\frac{S}{N}\right)
 $$
 
-where (B) is bandwidth and (S/N) is the signal-to-noise power ratio. The relation exposes a practical trade-off: additional power increases capacity, but with diminishing returns（边际收益递减）; additional bandwidth can also increase capacity. Real systems therefore trade spectrum, power, hardware complexity and delay against one another.
+where $B$ is bandwidth and $S/N$ is the signal-to-noise power ratio. The relation exposes a practical trade-off: additional power increases capacity, but with diminishing returns（边际收益递减）; additional bandwidth can also increase capacity. Real systems therefore trade spectrum, power, hardware complexity and delay against one another.
 
 Information theory later shaped compression, error-correcting codes, cryptography, machine learning and many other fields. One distinction remains essential: Shannon entropy measures uncertainty in a probability distribution. It is not a direct measure of semantic meaning（语义意义）, usefulness or truth.
 
