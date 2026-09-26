@@ -7,6 +7,16 @@ section: knowledge
 kind: principle
 topics: ["Information Theory", "Communications", "Mathematical Principles"]
 counterpart: "knowledge/principles/shannon-channel-capacity-zh"
+prerequisites:
+  level: intermediate
+  subjects:
+    - name: "Algebra and logarithms"
+      note: "You should be comfortable with logarithms, exponents and reading how one variable changes with another."
+    - name: "Basic probability"
+      note: "Random variables, probability distributions, expectation and conditional probability are useful; entropy and mutual information are introduced in the article."
+    - name: "Signal and communication intuition"
+      note: "Knowing what bandwidth, noise and signal-to-noise ratio mean is enough; a formal communications course is not required."
+  note: "Readers interested mainly in the result and engineering impact can skim the differential-entropy and degrees-of-freedom steps."
 sources:
   - name: "Claude E. Shannon, A Mathematical Theory of Communication"
     published: "Bell System Technical Journal, 1948"
@@ -64,7 +74,7 @@ Engineers knew before Shannon that wider channels could carry more information a
 
 Shannon turned that engineering question into a probabilistic one in 1948. The sender chooses one message from many possibilities. The receiver observes a corrupted version and tries to infer what was sent. Once the problem is framed this way, uncertainty, conditional probability and error rate become measurable objects.
 
-## Begin with (Y=X+N)
+## Begin with $Y=X+N$
 
 A standard idealisation is the additive white Gaussian noise channel:
 
@@ -72,35 +82,35 @@ $$
 Y=X+N
 $$
 
-Here (X) is the transmitted signal, (N) is noise and (Y) is what the receiver sees. “Additive” means the noise is superimposed on the signal. “Gaussian” describes the amplitude distribution of the noise. “White” means its power spectral density is approximately flat across the band of interest.
+Here $X$ is the transmitted signal, $N$ is noise and $Y$ is what the receiver sees. “Additive” means the noise is superimposed on the signal. “Gaussian” describes the amplitude distribution of the noise. “White” means its power spectral density is approximately flat across the band of interest.
 
-Capacity would be meaningless without a power constraint: an unlimited transmitter could simply keep increasing signal power. Let the average signal power be (S) and the noise power be (N). The question becomes: which distribution of (X) lets the receiver extract the greatest amount of information from (Y)?
+Capacity would be meaningless without a power constraint: an unlimited transmitter could simply keep increasing signal power. Let the average signal power be $S$ and the noise power be $N$. The question becomes: which distribution of $X$ lets the receiver extract the greatest amount of information from $Y$?
 
 ## Mutual information measures what survives the channel
 
 Shannon's quantity is mutual information:
 
 $$
-I(X;Y)=H(X)-H(Xmid Y)
+I(X;Y)=H(X)-H(X\mid Y)
 $$
 
-The first term describes uncertainty about (X) before observing the channel output. The second describes the uncertainty that remains after (Y) is known. Their difference is the information the observation has supplied.
+The first term describes uncertainty about $X$ before observing the channel output. The second describes the uncertainty that remains after $Y$ is known. Their difference is the information the observation has supplied.
 
 For continuous Gaussian variables the formal derivation uses differential entropy. One mathematical fact does much of the work: **among distributions with a fixed variance, the Gaussian distribution has the greatest differential entropy.**
 
-If the noise is Gaussian and the input is also chosen to be Gaussian, then (Y=X+N) is Gaussian. For one real degree of freedom, the resulting mutual information is
+If the noise is Gaussian and the input is also chosen to be Gaussian, then $Y=X+N$ is Gaussian. For one real degree of freedom, the resulting mutual information is
 
 $$
 rac{1}{2}log_2left(1+rac{S}{N}ight)
 $$
 
-A real band-limited channel of bandwidth (B) provides about (2B) real degrees of freedom per second. Multiplying the two gives
+A real band-limited channel of bandwidth $B$ provides about $2B$ real degrees of freedom per second. Multiplying the two gives
 
 $$
 C=Blog_2left(1+rac{S}{N}ight)
 $$
 
-with (C) measured in bits per second.
+with $C$ measured in bits per second.
 
 This is a theoretical result under a model, not a curve fitted to network measurements.
 
@@ -116,7 +126,7 @@ Bandwidth behaves differently because it appears outside the logarithm. In pract
 
 The capacity number is only part of Shannon's result. The channel coding theorem supplies the more consequential boundary.
 
-If the transmission rate (R<C), there exist sufficiently long and sufficiently well-designed codes whose error probability can be made arbitrarily small. If (R>C), no coding strategy can preserve that level of reliability.
+If the transmission rate $R<C$, there exist sufficiently long and sufficiently well-designed codes whose error probability can be made arbitrarily small. If $R>C$, no coding strategy can preserve that level of reliability.
 
 The theorem does not hand engineers a universal encoder. It gives them a target. A new coding scheme can be judged not only against an older implementation but against the channel limit itself.
 
