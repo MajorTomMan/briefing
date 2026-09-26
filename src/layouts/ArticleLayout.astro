@@ -48,6 +48,7 @@ interface Props {
   dek: string;
   date: Date;
   section: "alert" | "daily" | "knowledge";
+  kind?: "feature" | "principle";
   lang: "zh" | "en";
   topics?: string[];
   counterpart?: string;
@@ -62,6 +63,7 @@ const {
   dek,
   date,
   section,
+  kind = "feature",
   lang,
   topics = [],
   counterpart,
@@ -73,7 +75,13 @@ const {
 
 const base = import.meta.env.BASE_URL;
 const sectionLabel = section === "alert" ? "重大事件" : section === "daily" ? "每日简报" : "知识漫游";
-const sectionEnglish = section === "alert" ? "MAJOR ALERT" : section === "daily" ? "DAILY BRIEF" : "KNOWLEDGE BRIEF";
+const sectionEnglish = section === "alert"
+  ? "MAJOR ALERT"
+  : section === "daily"
+    ? "DAILY BRIEF"
+    : kind === "principle"
+      ? "KNOWLEDGE / PRINCIPLE"
+      : "KNOWLEDGE BRIEF";
 const counterpartHref = counterpart
   ? `${base}${counterpart.replace(/^\//, "")}/`.replace(/\/{2,}/g, "/")
   : undefined;
@@ -87,7 +95,7 @@ const sourceCount = sources.length;
         <div class="article-kicker-row">
           <div>
             <div class="eyebrow">{sectionEnglish}</div>
-            <div class="section-label">{sectionLabel}</div>
+            <div class="section-label">{sectionLabel}{kind === "principle" ? " · 原理" : ""}</div>
           </div>
           <div class="article-number">{date.toISOString().slice(0, 10).replaceAll("-", " / ")}</div>
         </div>
