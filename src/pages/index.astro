@@ -16,6 +16,7 @@ const normalize = (section: "alert" | "daily" | "knowledge", route: string, entr
   date: entry.data.date.toISOString().slice(0, 10),
   section,
   lang: entry.data.lang,
+  kind: entry.data.kind,
 });
 const items = [
   ...alerts.map((entry) => normalize("alert", "alerts", entry)),
