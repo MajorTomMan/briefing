@@ -1,0 +1,39 @@
+---
+import katex from "katex";
+
+interface Source {
+  name: string;
+  published?: string;
+  url: string;
+}
+
+interface Formula {
+  name: string;
+  expression: string;
+  note?: string;
+  source: Source;
+}
+
+interface Props {
+  formula: Formula;
+}
+
+const { formula } = Astro.props;
+const html = katex.renderToString(formula.expression, {
+  displayMode: true,
+  throwOnError: false,
+  strict: "ignore",
+});
+---
+
+<section class="formula-reference">
+  <div class="formula-reference__head">
+    <span>FORMULA / SOURCE</span>
+    <strong>{formula.name}</strong>
+  </div>
+  <div class="formula-reference__math" set:html={html}></div>
+  {formula.note && <p>{formula.note}</p>}
+  <a href={formula.source.url} target="_blank" rel="noreferrer">
+    {formula.source.name}{formula.source.published ? ` · ${formula.source.published}` : ""}
+  </a>
+</section>
