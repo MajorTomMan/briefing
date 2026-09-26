@@ -1,0 +1,33 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  title: string;
+  description: string;
+  entries: CollectionEntry<"alerts" | "daily" | "knowledge">[];
+  section: "alerts" | "daily" | "knowledge";
+}
+const { title, description, entries, section } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+<section class="site-shell">
+  <div class="hero">
+    <div class="eyebrow">Briefing</div>
+    <h1>{title}</h1>
+    <p>{description}</p>
+  </div>
+  <div class="card-grid" style="margin: 34px 0 70px;">
+    {entries.length ? entries.map((entry) => (
+      <article class="story-card">
+        <a href={`${base}${section}/${entry.id}/`}>
+          <div class="story-meta">
+            <span>{entry.data.date.toISOString().slice(0, 10)}</span>
+            <span>{entry.data.lang === "zh" ? "中文" : "English"}</span>
+          </div>
+          <h3>{entry.data.title}</h3>
+          <p>{entry.data.dek}</p>
+        </a>
+      </article>
+    )) : <div class="empty">暂无内容。</div>}
+  </div>
+</section>

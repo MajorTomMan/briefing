@@ -1,0 +1,9 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SectionIndex from "../../components/SectionIndex.astro";
+const entries = (await getCollection("alerts")).sort((a,b) => b.data.date.getTime() - a.data.date.getTime());
+---
+<BaseLayout title="重大事件">
+  <SectionIndex title="重大事件" description="只收录达到即时提醒级别、可能显著影响全球市场、政策、金融体系、能源、供应链或科技产业链的事件。" entries={entries} section="alerts" />
+</BaseLayout>

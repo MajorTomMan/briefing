@@ -1,0 +1,54 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+
+interface Source {
+  name: string;
+  published?: string;
+  url: string;
+}
+interface Props {
+  title: string;
+  dek: string;
+  date: Date;
+  section: "alert" | "daily" | "knowledge";
+  lang: "zh" | "en";
+  topics?: string[];
+  counterpart?: string;
+  sources?: Source[];
+}
+const { title, dek, date, section, lang, topics = [], counterpart, sources = [] } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const sectionLabel = section === "alert" ? "重大事件" : section === "daily" ? "每日简报" : "知识漫游";
+const counterpartHref = counterpart ? `${base}${counterpart.replace(/^\//, "")}/`.replace(/\/{2,}/g, "/") : undefined;
+---
+<BaseLayout title={title} description={dek}>
+  <div class="site-shell article-wrap">
+    <article>
+      <header class="article-header">
+        <div class="eyebrow">{sectionLabel}</div>
+        <h1>{title}</h1>
+        <div class="article-dek">{dek}</div>
+        <div class="article-meta">
+          <span>{date.toISOString().slice(0, 10)}</span>
+          <span>{lang === "zh" ? "中文版" : "English Edition"}</span>
+          {topics.map((topic) => <span>{topic}</span>)}
+        </div>
+        {counterpartHref && <a class="lang-link" href={counterpartHref}>{lang === "zh" ? "Read in English →" : "阅读中文版 →"}</a>}
+      </header>
+      <div class="prose"><slot /></div>
+    </article>
+    <aside class="article-aside">
+      <h3>{lang === "zh" ? "来源" : "Sources"}</h3>
+      {sources.length > 0 ? (
+        <ol class="source-list">
+          {sources.map((source) => (
+            <li>
+              <a href={source.url} target="_blank" rel="noreferrer">{source.name}</a>
+              {source.published && <div>{source.published}</div>}
+            </li>
+          ))}
+        </ol>
+      ) : <div class="empty">{lang === "zh" ? "暂无来源列表" : "No source list"}</div>}
+    </aside>
+  </div>
+</BaseLayout>

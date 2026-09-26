@@ -1,0 +1,9 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SectionIndex from "../../components/SectionIndex.astro";
+const entries = (await getCollection("daily")).sort((a,b) => b.data.date.getTime() - a.data.date.getTime());
+---
+<BaseLayout title="每日简报">
+  <SectionIndex title="每日简报" description="全球市场、政策、金融与科技的长篇日度简报，中文与英文版本独立排版。" entries={entries} section="daily" />
+</BaseLayout>

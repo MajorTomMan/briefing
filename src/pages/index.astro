@@ -1,0 +1,42 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import BriefFilter from "../components/BriefFilter.vue";
+
+const base = import.meta.env.BASE_URL;
+const [alerts, daily, knowledge] = await Promise.all([
+  getCollection("alerts"),
+  getCollection("daily"),
+  getCollection("knowledge"),
+]);
+const normalize = (section: "alert" | "daily" | "knowledge", route: string, entry: any) => ({
+  href: `${base}${route}/${entry.id}/`,
+  title: entry.data.title,
+  dek: entry.data.dek,
+  date: entry.data.date.toISOString().slice(0, 10),
+  section,
+  lang: entry.data.lang,
+});
+const items = [
+  ...alerts.map((entry) => normalize("alert", "alerts", entry)),
+  ...daily.map((entry) => normalize("daily", "daily", entry)),
+  ...knowledge.map((entry) => normalize("knowledge", "knowledge", entry)),
+].sort((a, b) => b.date.localeCompare(a.date));
+---
+<BaseLayout>
+  <section class="hero">
+    <div class="site-shell">
+      <div class="eyebrow">Independent briefing archive</div>
+      <h1>Markets, policy, technology and ideas.</h1>
+      <p>用于长期沉淀重大事件提醒、全球市场与政策简报，以及跨学科知识漫游。正文优先保留背景、机制、时间线、来源与公式，而不是压缩成碎片化摘要。</p>
+    </div>
+  </section>
+  <section class="site-shell">
+    <div class="section-head">
+      <h2>最新发布</h2>
+      <span>Latest publications</span>
+    </div>
+    <BriefFilter client:load items={items} />
+  </section>
+  <div style="height: 70px"></div>
+</BaseLayout>

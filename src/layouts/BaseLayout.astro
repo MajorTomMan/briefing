@@ -1,0 +1,42 @@
+---
+import "../styles/global.css";
+import "katex/dist/katex.min.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const {
+  title = "Briefing",
+  description = "Long-form market, policy, technology and knowledge briefings.",
+} = Astro.props;
+const base = import.meta.env.BASE_URL;
+const home = base;
+const link = (path: string) => `${base}${path.replace(/^\//, "")}`;
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light" />
+    <title>{title === "Briefing" ? title : `${title} · Briefing`}</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-shell header-inner">
+        <a class="brand" href={home}>Briefing</a>
+        <nav class="nav" aria-label="Primary">
+          <a href={link("alerts/")}>重大事件</a>
+          <a href={link("daily/")}>每日简报</a>
+          <a href={link("knowledge/")}>知识漫游</a>
+        </nav>
+      </div>
+    </header>
+    <main><slot /></main>
+    <footer class="site-footer">
+      <div class="site-shell">Briefing · long-form reporting and knowledge notes</div>
+    </footer>
+  </body>
+</html>
