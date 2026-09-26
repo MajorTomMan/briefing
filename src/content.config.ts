@@ -16,6 +16,7 @@ const formulaSchema = z.object({
 
 const quoteSchema = z.object({
   quote: z.string(),
+  translation: z.string().optional(),
   note: z.string().optional(),
   source: sourceSchema,
 });
@@ -45,6 +46,7 @@ const articleSchema = z.object({
   updated: z.coerce.date().optional(),
   lang: z.enum(["zh", "en"]),
   section: z.enum(["alert", "daily", "knowledge"]),
+  kind: z.enum(["feature", "principle"]).default("feature"),
   topics: z.array(z.string()).default([]),
   counterpart: z.string().optional(),
   sources: z.array(sourceSchema).default([]),
