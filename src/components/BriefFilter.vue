@@ -8,6 +8,7 @@ type Item = {
   date: string;
   section: "alert" | "daily" | "knowledge";
   lang: "zh" | "en";
+  kind?: "feature" | "principle";
 };
 
 const props = defineProps<{ items: Item[] }>();
@@ -47,6 +48,7 @@ const sectionName = (section: Item["section"]) =>
             <span>{{ sectionName(item.section) }}</span>
             <span>{{ item.date }}</span>
             <span>{{ item.lang === "zh" ? "中文" : "English" }}</span>
+            <span v-if="item.section === 'knowledge' && item.kind === 'principle'" class="principle-tag">原理</span>
           </div>
           <h3>{{ item.title }}</h3>
           <p>{{ item.dek }}</p>
