@@ -19,12 +19,14 @@ sources:
     url: "https://www.niddk.nih.gov/health-information/digestive-diseases/peptic-ulcers-stomach-ulcers/treatment"
 quotes:
   - quote: "The semantic aspects of communication are irrelevant to the engineering problem."
+    translation: "通信的语义层面与工程问题无关。"
     note: "香农在论文开篇明确区分“语义”与通信工程中的可测量问题。"
     source:
       name: "Claude E. Shannon, A Mathematical Theory of Communication"
       published: "1948"
       url: "https://doi.org/10.1002/j.1538-7305.1948.tb00917.x"
   - quote: "peptic ulcer disease is no longer a chronic, frequently disabling condition, but a disease that can be permanently cured."
+    translation: "消化性溃疡不再是一种慢性、经常导致功能受损的疾病，而成为一种可以得到持久治愈的疾病。"
     note: "诺贝尔委员会对这一病因模型改变临床后果的概括。"
     source:
       name: "Nobel Prize — Physiology or Medicine 2005"
