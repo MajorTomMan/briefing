@@ -13,10 +13,53 @@ sources:
   - name: "British Museum — The Rosetta Stone"
     url: "https://www.britishmuseum.org/collection/object/Y_EA24"
   - name: "Nobel Prize — Physiology or Medicine 2005"
-    published: "2005"
+    published: "3 October 2005"
     url: "https://www.nobelprize.org/prizes/medicine/2005/press-release/"
   - name: "NIDDK — Treatment for Peptic Ulcers"
     url: "https://www.niddk.nih.gov/health-information/digestive-diseases/peptic-ulcers-stomach-ulcers/treatment"
+quotes:
+  - quote: "The semantic aspects of communication are irrelevant to the engineering problem."
+    note: "香农在论文开篇明确区分“语义”与通信工程中的可测量问题。"
+    source:
+      name: "Claude E. Shannon, A Mathematical Theory of Communication"
+      published: "1948"
+      url: "https://doi.org/10.1002/j.1538-7305.1948.tb00917.x"
+  - quote: "peptic ulcer disease is no longer a chronic, frequently disabling condition, but a disease that can be permanently cured."
+    note: "诺贝尔委员会对这一病因模型改变临床后果的概括。"
+    source:
+      name: "Nobel Prize — Physiology or Medicine 2005"
+      published: "2005"
+      url: "https://www.nobelprize.org/prizes/medicine/2005/7693-the-nobel-prize-in-physiology-or-medicine-2005-2005-6/"
+charts:
+  - title: "AWGN 信道：信噪比与单位带宽理论容量"
+    description: "根据 Shannon 容量关系计算。横轴为信噪比（dB），纵轴为单位带宽容量 C/B。"
+    type: line
+    xLabel: "SNR (dB)"
+    yLabel: "C/B (bit/s/Hz)"
+    labels: ["−10", "−5", "0", "5", "10", "15", "20"]
+    series:
+      - name: "理论容量"
+        values: [0.138, 0.396, 1.0, 2.057, 3.459, 5.028, 6.658]
+    note: "由 C/B = log₂(1 + S/N) 计算，其中 S/N = 10^(SNR_dB/10)。这是理论曲线，不是实测网络数据。"
+    source:
+      name: "Claude E. Shannon, A Mathematical Theory of Communication"
+      published: "1948"
+      url: "https://doi.org/10.1002/j.1538-7305.1948.tb00917.x"
+formulas:
+  - name: "香农熵"
+    expression: "H(X)=-\\sum_{i=1}^{n}p_i\\log_2 p_i"
+    note: "离散随机变量不确定性的平均度量；对数底为 2 时单位为 bit。"
+    source:
+      name: "Claude E. Shannon, A Mathematical Theory of Communication"
+      published: "1948"
+      url: "https://doi.org/10.1002/j.1538-7305.1948.tb00917.x"
+  - name: "AWGN 信道容量"
+    expression: "C=B\\log_2\\left(1+\\frac{S}{N}\\right)"
+    note: "B 为带宽，S/N 为信噪功率比；图表使用该式计算单位带宽容量。"
+    source:
+      name: "Claude E. Shannon, A Mathematical Theory of Communication"
+      published: "1948"
+      url: "https://doi.org/10.1002/j.1538-7305.1948.tb00917.x"
 ---
 
 ## 一、香农信息论：把“通信”从工程经验变成数学边界
@@ -28,7 +71,7 @@ sources:
 如果离散随机变量 $X$ 可能取值 $x_i$，概率为 $p_i$，香农熵定义为：
 
 $$
-H$X$=-\sum_{i=1}^{n}p_i\log_2 p_i
+H(X)=-\sum_{i=1}^{n}p_i\log_2 p_i
 $$
 
 单位是 bit。若两个结果等概率出现，熵为 1 bit；若一个结果几乎必然发生，熵趋近于 0，因为观察它几乎没有消除新的不确定性。
@@ -38,7 +81,7 @@ $$
 对于带噪信道，香农进一步使用互信息：
 
 $$
-I(X;Y)=H$X$-H(X\mid Y)
+I(X;Y)=H(X)-H(X\mid Y)
 $$
 
 它衡量观察 $Y$ 后，对 $X$ 的不确定性减少了多少。信道容量则写成：
