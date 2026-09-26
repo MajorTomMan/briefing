@@ -21,6 +21,15 @@ const quoteSchema = z.object({
   source: sourceSchema,
 });
 
+const prerequisiteSchema = z.object({
+  level: z.enum(["basic", "intermediate", "advanced"]),
+  subjects: z.array(z.object({
+    name: z.string(),
+    note: z.string().optional(),
+  })).min(1),
+  note: z.string().optional(),
+});
+
 const chartSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
@@ -49,6 +58,7 @@ const articleSchema = z.object({
   kind: z.enum(["feature", "principle"]).default("feature"),
   topics: z.array(z.string()).default([]),
   counterpart: z.string().optional(),
+  prerequisites: prerequisiteSchema.optional(),
   sources: z.array(sourceSchema).default([]),
   formulas: z.array(formulaSchema).default([]),
   quotes: z.array(quoteSchema).default([]),
