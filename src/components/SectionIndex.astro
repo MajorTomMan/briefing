@@ -23,6 +23,7 @@ const base = import.meta.env.BASE_URL;
           <div class="story-meta">
             <span>{entry.data.date.toISOString().slice(0, 10)}</span>
             <span>{entry.data.lang === "zh" ? "中文" : "English"}</span>
+            {section === "knowledge" && entry.data.kind === "principle" && <span class="principle-tag">原理</span>}
           </div>
           <h3>{entry.data.title}</h3>
           <p>{entry.data.dek}</p>
