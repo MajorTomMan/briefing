@@ -13,10 +13,53 @@ sources:
   - name: "British Museum — The Rosetta Stone"
     url: "https://www.britishmuseum.org/collection/object/Y_EA24"
   - name: "Nobel Prize — Physiology or Medicine 2005"
-    published: "2005"
+    published: "3 October 2005"
     url: "https://www.nobelprize.org/prizes/medicine/2005/press-release/"
   - name: "NIDDK — Treatment for Peptic Ulcers"
     url: "https://www.niddk.nih.gov/health-information/digestive-diseases/peptic-ulcers-stomach-ulcers/treatment"
+quotes:
+  - quote: "The semantic aspects of communication are irrelevant to the engineering problem."
+    note: "Shannon separates semantic meaning from the measurable engineering problem at the outset."
+    source:
+      name: "Claude E. Shannon, A Mathematical Theory of Communication"
+      published: "1948"
+      url: "https://doi.org/10.1002/j.1538-7305.1948.tb00917.x"
+  - quote: "peptic ulcer disease is no longer a chronic, frequently disabling condition, but a disease that can be permanently cured."
+    note: "The Nobel Committee's concise statement of the clinical consequence of the causal shift."
+    source:
+      name: "Nobel Prize — Physiology or Medicine 2005"
+      published: "2005"
+      url: "https://www.nobelprize.org/prizes/medicine/2005/7693-the-nobel-prize-in-physiology-or-medicine-2005-2005-6/"
+charts:
+  - title: "AWGN channel: SNR and theoretical capacity per unit bandwidth"
+    description: "Calculated from Shannon's capacity relation. The horizontal axis is SNR in dB; the vertical axis is C/B."
+    type: line
+    xLabel: "SNR (dB)"
+    yLabel: "C/B (bit/s/Hz)"
+    labels: ["−10", "−5", "0", "5", "10", "15", "20"]
+    series:
+      - name: "Theoretical capacity"
+        values: [0.138, 0.396, 1.0, 2.057, 3.459, 5.028, 6.658]
+    note: "Computed from C/B = log₂(1 + S/N), using S/N = 10^(SNR_dB/10). This is a theoretical curve, not measured network performance."
+    source:
+      name: "Claude E. Shannon, A Mathematical Theory of Communication"
+      published: "1948"
+      url: "https://doi.org/10.1002/j.1538-7305.1948.tb00917.x"
+formulas:
+  - name: "Shannon entropy"
+    expression: "H(X)=-\\sum_{i=1}^{n}p_i\\log_2 p_i"
+    note: "Average uncertainty of a discrete random variable; base-2 logarithms give units of bits."
+    source:
+      name: "Claude E. Shannon, A Mathematical Theory of Communication"
+      published: "1948"
+      url: "https://doi.org/10.1002/j.1538-7305.1948.tb00917.x"
+  - name: "AWGN channel capacity"
+    expression: "C=B\\log_2\\left(1+\\frac{S}{N}\\right)"
+    note: "B is bandwidth and S/N is the signal-to-noise power ratio; the chart above is generated from this relation."
+    source:
+      name: "Claude E. Shannon, A Mathematical Theory of Communication"
+      published: "1948"
+      url: "https://doi.org/10.1002/j.1538-7305.1948.tb00917.x"
 ---
 
 ## 1. Shannon's information theory: turning communication into a mathematical limit
@@ -28,7 +71,7 @@ He deliberately separated semantic meaning from transmission. A sender chooses o
 For a discrete random variable $X$ with outcomes $x_i$ and probabilities $p_i$, Shannon entropy is
 
 $$
-H$X$=-\sum_{i=1}^{n}p_i\log_2 p_i
+H(X)=-\sum_{i=1}^{n}p_i\log_2 p_i
 $$
 
 The unit is the bit. Two equally likely alternatives have an entropy of one bit. If one outcome is almost certain, entropy approaches zero because observing it removes very little uncertainty.
@@ -38,7 +81,7 @@ This idea connects directly to compression. When symbols have unequal probabilit
 For noisy channels, Shannon introduced mutual information:
 
 $$
-I(X;Y)=H$X$-H(X\mid Y)
+I(X;Y)=H(X)-H(X\mid Y)
 $$
 
 It measures how much observing $Y$ tells us about $X$. Channel capacity is then
