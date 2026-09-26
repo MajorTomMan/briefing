@@ -6,6 +6,19 @@ lang: en
 section: knowledge
 topics: ["Information Theory", "Writing Systems", "Medical History"]
 counterpart: "knowledge/2026-09-25/zh"
+principles:
+  - chapter: "1. Shannon information theory"
+    title: "Shannon Capacity: Why the Communication Limit Is Logarithmic"
+    href: "knowledge/principles/shannon-channel-capacity-en"
+    note: "From the AWGN model and mutual information to the boundary between reliable and unreliable communication."
+  - chapter: "2. The Rosetta Stone"
+    title: "Why the Rosetta Stone Could Unlock Hieroglyphs"
+    href: "knowledge/principles/rosetta-decipherment-en"
+    note: "How known text, royal names, repeated signs and Coptic constrained competing decipherment hypotheses."
+  - chapter: "3. Helicobacter pylori"
+    title: "How Helicobacter pylori Establishes a Foothold in the Stomach"
+    href: "knowledge/principles/h-pylori-colonization-en"
+    note: "How urease, acid-responsive transport, motility and the mucus layer work together in persistent colonisation."
 sources:
   - name: "Claude E. Shannon, A Mathematical Theory of Communication"
     published: "Bell System Technical Journal, 1948"
