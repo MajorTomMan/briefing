@@ -6,6 +6,19 @@ lang: zh
 section: knowledge
 topics: ["信息论", "语言与文字", "医学史"]
 counterpart: "knowledge/2026-09-25/en"
+principles:
+  - chapter: "一、香农信息论"
+    title: "香农信道容量：为什么通信极限是一个对数"
+    href: "knowledge/principles/shannon-channel-capacity-zh"
+    note: "从 AWGN 模型、互信息和最大熵性质推到信道容量，并说明可靠通信边界如何形成。"
+  - chapter: "二、罗塞塔石碑"
+    title: "罗塞塔石碑为什么能帮助破译象形文字"
+    href: "knowledge/principles/rosetta-decipherment-zh"
+    note: "把已知文本、王名、重复符号和科普特语看成一套逐步收紧的约束。"
+  - chapter: "三、幽门螺杆菌"
+    title: "幽门螺杆菌如何在强酸环境中长期定植"
+    href: "knowledge/principles/h-pylori-colonization-zh"
+    note: "解释尿素酶、酸响应运输、鞭毛运动和胃黏液生态位如何共同形成持续感染。"
 sources:
   - name: "Claude E. Shannon, A Mathematical Theory of Communication"
     published: "Bell System Technical Journal, 1948"
