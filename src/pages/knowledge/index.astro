@@ -5,5 +5,5 @@ import SectionIndex from "../../components/SectionIndex.astro";
 const entries = (await getCollection("knowledge")).sort((a,b) => b.data.date.getTime() - a.data.date.getTime());
 ---
 <BaseLayout title="知识漫游">
-  <SectionIndex title="知识漫游" description="跨学科、跨时代的深度阅读：数学、工程、历史、制度、生命科学与计算机。" entries={entries} section="knowledge" />
+  <SectionIndex title="知识漫游" description="跨学科、跨时代的深度阅读，并加入“原理”文章：不只说明发生了什么，还追到机制、结果、证据与后来产生的影响。" entries={entries} section="knowledge" />
 </BaseLayout>
